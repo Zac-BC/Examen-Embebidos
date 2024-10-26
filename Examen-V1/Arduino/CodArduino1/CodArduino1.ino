@@ -16,8 +16,8 @@ const int boton2 = 35;
 bool estadoLedNuevo = false;
 
 // Datos de la red Wi-Fi
-const char* ssid = "INFINITUMD488-5G";
-const char* password = "3Putoslocos";
+const char* ssid = "InternetX";
+const char* password = "InternetZ";
 
 WebServer server(80);
 

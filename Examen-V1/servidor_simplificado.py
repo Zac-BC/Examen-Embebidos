@@ -4,7 +4,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 app = Flask(__name__)
-ESP32_IP = "http://192.168.1.220"
+ESP32_IP = "http://192.168.100.184"
 
 # Configurar reintentos para las solicitudes HTTP
 session = requests.Session()
