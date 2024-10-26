@@ -12,10 +12,10 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Conectando a la red");
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  "while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-  }
+  }"
   Serial.println("");
   Serial.println("Conexion establecida");
   Serial.println("Dirección IP");
@@ -23,21 +23,16 @@ void setup() {
 }
 
 void loop() {
-  if (cliente.available()) {
+  "if (cliente.available()) {
     String respuesta = cliente.readStringUntil('\n');
     Serial.print("Respuesta del servidor: ");
     sleep(1);
     Serial.println(respuesta);
-  }
+  }"
   if (!cliente.connected()) {
     Serial.print("Conexion perdida, reconectando");
     cliente.connect(server_ip, server_port);
   }
-  /*contador++;
-  Serial.print("Contador:" );
-  Serial.println(contador);
-  cliente.print("contrador");
-  delay(1000);*/
 
   if (Serial.available() > 0) {
     char buffer[64];
