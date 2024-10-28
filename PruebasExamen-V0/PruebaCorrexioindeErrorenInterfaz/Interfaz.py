@@ -43,7 +43,7 @@ class MainWindow(QWidget):
         entradas_layout.addWidget(QLabel("Entradas"))
         
         self.circles = []
-        for i in range(2):  # Siete círculos editables
+        for i in range(2):  # Dos círculos editables
             circle_widget = EditableCircleWidget(f'circle_{i}', self.color_manager)
             self.circles.append(circle_widget)
             entradas_layout.addWidget(circle_widget)
@@ -51,9 +51,8 @@ class MainWindow(QWidget):
         # Column 2: Salidas
         salidas_layout = QVBoxLayout()
         salidas_layout.addWidget(QLabel("Salidas"))
-        for _ in range(5):
-            #salidas_layout.addWidget(EditableCircleWidget('salida_circle', self.color_manager))
-            circle_widget = EditableCircleWidget(f'circle_{i}', self.color_manager)
+        for i in range(5):
+            circle_widget = EditableCircleWidget(f'circle_{i+2}', self.color_manager)
             self.circles.append(circle_widget)
             salidas_layout.addWidget(circle_widget)
 
@@ -86,9 +85,12 @@ class MainWindow(QWidget):
             circle_widget.setColor(color)
 
     def updateColorFromCode(self, circle_index, code):
-        self.color_manager.update_color_based_on_code(f'circle_{circle_index}', code)
-        new_color = self.color_manager.get_color(f'circle_{circle_index}')
-        self.circles[circle_index].setColor(new_color)  # Actualiza el color del círculo
+        if 0 <= circle_index < len(self.circles):
+            self.color_manager.update_color_based_on_code(f'circle_{circle_index}', code)
+            new_color = self.color_manager.get_color(f'circle_{circle_index}')
+            self.circles[circle_index].setColor(new_color)  # Actualiza el color del círculo
+        else:
+            print(f"Índice {circle_index} fuera de rango. No se puede actualizar el color.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -19,7 +19,16 @@ const char* password = "InternetZ";
 const char* server_ip = "192.168.100.128";
 const int server_port = 65434;
 int contador = 0;
+
+const int puertos[7]= {2,4,5,18,19,34,35};
 WiFiClient cliente;
+
+// Variables para el semáforo
+unsigned long previousMillis = 0;
+const long intervalRojo = 5000; // 5 segundos
+const long intervalAmarillo = 2000; // 2 segundos
+const long intervalVerde = 5000; // 5 segundos
+int estadoSemaforo = 0; // 0: Rojo, 1: Verde, 2: Amarillo
 
 void setup() {
   Serial.begin(115200);
@@ -50,14 +59,8 @@ void setup() {
 
 void loop() {
   if (!cliente.connected()) {
-    Serial.print("Conexion perdida, reconectando");
+    Serial.println("Conexion perdida, reconectando");
     cliente.connect(server_ip, server_port);
-  }
-
-  if (cliente.available()) {
-    String respuesta = cliente.readStringUntil('\n');
-    Serial.print("Respuesta del servidor: ");
-    Serial.println(respuesta);
   }
 
   if (Serial.available() > 0) {
@@ -68,23 +71,50 @@ void loop() {
   }
 
   int estados[7];
+
   for (int i = 0; i < 7; i++) {
     estados[i] = GetterPuerto(i);
   }
-
+  Serial.println("Led2:"+String(estados[0])+"Led4:"+String(estados[1])+"Led5:"+String(estados[2])+"Led18:"+String(estados[3])+"Led19:"+String(estados[4])+"Led34:"+String(estados[5])+"Led35:"+String(estados[6]));// Nueva línea después de enviar todos los estados
   if (cliente.connected()) {
+    sleep(1);
+    //int puertos[7]= {2,4,5,18,19,34,35}
+    Serial.println(String(estados[0])+String(estados[1])+String(estados[2])+String(estados[3])+String(estados[4])+String(estados[5])+String(estados[6]));// Nueva línea después de enviar todos los estados
     cliente.println(String(estados[0])+String(estados[1])+String(estados[2])+String(estados[3])+String(estados[4])+String(estados[5])+String(estados[6]));// Nueva línea después de enviar todos los estados
   }
 
-  for (int i = 0; i < 7; i++) {
-    Serial.print("Estado del puerto ");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(estados[i]);
+  // Control del semáforo
+  unsigned long currentMillis = millis();
+  switch (estadoSemaforo) {
+    case 0: // Rojo
+      if (currentMillis - previousMillis >= intervalRojo) {
+        previousMillis = currentMillis;
+        estadoSemaforo = 1;
+        digitalWrite(ledRojo, LOW);
+        digitalWrite(ledVerde, HIGH);
+      }
+      break;
+    case 1: // Verde
+      if (currentMillis - previousMillis >= intervalVerde) {
+        previousMillis = currentMillis;
+        estadoSemaforo = 2;
+        digitalWrite(ledVerde, LOW);
+        digitalWrite(ledAmarillo, HIGH);
+      }
+      break;
+    case 2: // Amarillo
+      if (currentMillis - previousMillis >= intervalAmarillo) {
+        previousMillis = currentMillis;
+        estadoSemaforo = 0;
+        digitalWrite(ledAmarillo, LOW);
+        digitalWrite(ledRojo, HIGH);
+      }
+      break;
   }
 }
 
-int GetterPuerto(int botonx) {
-  int estado = digitalRead(botonx);
+int GetterPuerto(int posicion) {
+  //int puertos[7]= {2,4,5,18,19,34,35}
+  int estado = digitalRead(puertos[posicion]);
   return estado;
 }
